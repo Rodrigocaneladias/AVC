@@ -61,7 +61,21 @@ X_train = pipeline.fit_transform(X_train)
 X_test  = pipeline.transform(X_test)
 
 # 8. Recuperar nomes das colunas para análise
-feature_names = pipeline.get_feature_names_out()
+feature_names = [
+    'bmi',
+    'ever_married_Yes',
+    'Residence_type_Urban',
+    'gender_Male',
+    'smoking_status',
+    'Never_worked',
+    'Private',
+    'Self-employed',
+    'children',
+    'age',
+    'hypertension',
+    'heart_disease',
+    'avg_glucose_level'
+]
 X_train_df = pd.DataFrame(X_train, columns=feature_names)
 X_test_df  = pd.DataFrame(X_test,  columns=feature_names)
 
@@ -70,6 +84,7 @@ df_corr['stroke'] = y_train.reset_index(drop=True)
 
 print("Correlação com stroke (X_train):")
 print(df_corr.corr()['stroke'].sort_values(ascending=False))
+print(df_corr.head())
 
 print("Dimensões do X_train:", X_train_df.shape)
 print("Dimensões do X_test:",  X_test_df.shape)
