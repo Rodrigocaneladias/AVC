@@ -84,8 +84,12 @@ df_corr['stroke'] = y_train.reset_index(drop=True)
 
 print("Correlação com stroke (X_train):")
 print(df_corr.corr()['stroke'].sort_values(ascending=False))
+print("\n5 linhas do dataset:")
 print(df_corr.head())
+print("\nnumero de nulls na tabela:")
+print(df_corr.isnull().sum())
 
+print("\n--------------------------------------------------")
 print("Dimensões do X_train:", X_train_df.shape)
 print("Dimensões do X_test:",  X_test_df.shape)
 print("\nProporção de stroke em y_train:\n", y_train.value_counts(normalize=True))
