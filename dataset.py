@@ -1,9 +1,12 @@
 import pandas as pd
+import matplotlib.pyplot as plt
+import numpy as np  
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import OrdinalEncoder, OneHotEncoder, StandardScaler
 from sklearn.impute import SimpleImputer
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
+from sklearn.decomposition import PCA
 
 # 1. Carregar o dataset
 ds = pd.read_csv("./dataset/healthcare-dataset-stroke-data.csv")
@@ -79,8 +82,41 @@ feature_names = [
 X_train_df = pd.DataFrame(X_train, columns=feature_names)
 X_test_df  = pd.DataFrame(X_test,  columns=feature_names)
 
+#---------------------------------------------------------------------------------------------------
+#PCA
+# diminuir a quantidade de colunas sem perder muita informação, ou seja, sem perder muita variância
+# nao fez muita diferença ja que nao temos tantas colunas assim.
+#guardar os resultados para comparação posterior
+results = []
+#dados de exemplo para teste
+x = X_train_df
+#loop de 2 a 10 componentes
+for n in range(2, 13):
+    "cria o PCA com n componentes, ajusta aos dados e guarda a variância explicada acumulada"
+    pca = PCA(n_components=n)
+    #cria as componentes principais e calcula a variância explicada acumulada
+    pca.fit(x)
+    #Calcula a variança explicada acumulada e guarda o resultado
+    explained_variance = np.sum(pca.explained_variance_ratio_)
+    results.append((explained_variance)) 
+
+#Gerando grafico
+plt.figure(figsize=(15, 8))
+plt.plot(range(2, 13), results , marker='o', linestyle='-', color='b')
+plt.xlabel('Número de Componentes')
+plt.ylabel('Variância Explicada Acumulada %')
+plt.title('PCA - Variância Explicada por Número de Componentes')
+plt.grid(True)
+# adiciona rotulo aos pontos do grafico
+for i, (n_component, explained_variance) in enumerate(zip(range(2, 13), results)):
+    plt.text(n_component, explained_variance, f'Component {n_component}', ha='center', va='bottom')
+plt.show()
+
+#---------------------------------------------------------------------------------------------------
+
 df_corr = pd.DataFrame(X_train, columns=feature_names)
 df_corr['stroke'] = y_train.reset_index(drop=True)
+
 
 def print_data_info():
     print("\n--------------------------------------------------")
@@ -96,6 +132,7 @@ def print_data_info():
     print("Dimensões do X_test:",  X_test_df.shape)
     print("\nProporção de stroke em y_train:\n", y_train.value_counts(normalize=True))
     print("\nProporção de stroke em y_test:\n",  y_test.value_counts(normalize=True))
+print_data_info()
 
 def get_pipeline():
     return pipeline
