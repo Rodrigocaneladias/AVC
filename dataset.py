@@ -8,67 +8,68 @@ from sklearn.pipeline import Pipeline
 # 1. Carregar o dataset
 ds = pd.read_csv("./dataset/healthcare-dataset-stroke-data.csv")
 
-# 2. Pré-processamento inicial (fora do ColumnTransformer, pois são remoções ou substituições globais)
-# Tratar 'Unknown' em smoking_status
+# 2. Pré-processamento inicial (operações globais que não dependem de treino/teste)
 ds['smoking_status'] = ds['smoking_status'].replace('Unknown', 'never smoked')
-
-# Remover a linha com 'Other' em gender
 ds = ds.drop(ds[ds['gender'] == 'Other'].index).reset_index(drop=True)
+ds = ds.drop(columns=['id'])
 
-# Remover a coluna 'id'
-ds = ds.drop(columns=['id']).reset_index(drop=True)
+# 3. Separar X e y ANTES de qualquer transformação
+# Isso evita data leakage: o pipeline não pode "ver" o teste durante o fit
+X = ds.drop(columns=['stroke'])
+y = ds['stroke']
 
-# 3. Definir o ColumnTransformer para as transformações específicas
+# 4. Dividir em treino e teste com os dados ainda brutos
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42, stratify=y
+)
+
+# 5. Definir o ColumnTransformer
+# Cada tupla: (nome, transformador, lista_de_colunas)
 transformer = ColumnTransformer([
-    ('bmi_imputer', SimpleImputer(strategy='median'), ['bmi']), # Imputação de BMI
-    ('binary_categorical_encoder', OrdinalEncoder(), ['ever_married', 'Residence_type', 'gender']), # Categorias binárias
-    ('smoking_encoder', OrdinalEncoder(categories=[['never smoked', 'formerly smoked', 'smokes']]), ['smoking_status']), # Status de fumo ordinal
-    ('work_type_encoder', OneHotEncoder(drop='first', handle_unknown='ignore'), ['work_type']) # One-Hot Encoding para work_type
-], remainder='passthrough') # Manter as colunas não transformadas (como 'age', 'hypertension', 'stroke', etc.)
+    # Imputa bmi com mediana — calculada apenas no treino
+    ('bmi_imputer', SimpleImputer(strategy='median'), ['bmi']),
 
-# 4. Criar o Pipeline, incluindo o ColumnTransformer
-pipeline = Pipeline(steps=[('preprocessor', transformer),
-                           ('Standard_Scaler', StandardScaler())
-                           ])
+    # Variáveis binárias sem ordem: OneHotEncoder com drop='first'
+    # drop='first' remove a coluna redundante (se não é Male é Female)
+    ('binary_encoder',
+     OneHotEncoder(drop='first', sparse_output=False),
+     ['ever_married', 'Residence_type', 'gender']),
 
-# 5. Aplicar o pipeline ao dataset original
-ds_processed_pipeline = pipeline.fit_transform(ds)
+    # Status de fumo: tem ordem real (nunca < ex-fumante < fumante)
+    # OrdinalEncoder com ordem explícita é correto aqui
+    ('smoking_encoder',
+     OrdinalEncoder(categories=[['never smoked', 'formerly smoked', 'smokes']]),
+     ['smoking_status']),
 
-# 6. Obter os nomes das colunas transformadas e criar um DataFrame
-pipeline_feature_names = pipeline.get_feature_names_out()
-ds_pipeline_df = pd.DataFrame(ds_processed_pipeline, columns=pipeline_feature_names)
+    # work_type: sem ordem → OneHotEncoder
+    ('work_type_encoder',
+     OneHotEncoder(drop='first', handle_unknown='ignore', sparse_output=False),
+     ['work_type']),
 
-# Renomear a coluna 'remainder__stroke' de volta para 'stroke', se existir
-# (a coluna 'stroke' é passada por 'remainder__passthrough' e terá esse prefixo)
-if 'remainder__stroke' in ds_pipeline_df.columns:
-    ds_pipeline_df.rename(columns={'remainder__stroke': 'stroke'}, inplace=True)
+], remainder='passthrough')  # age, hypertension, heart_disease, glucose, etc.
 
-# 7. Calcular a matriz de correlação com a coluna 'stroke'
-corr_matrix_pipeline = ds_pipeline_df.corr()
+# 6. Pipeline: pré-processamento + normalização
+pipeline = Pipeline(steps=[
+    ('preprocessor', transformer),
+    ('scaler', StandardScaler()),
+])
 
-# 8. Exibir as correlações com a coluna 'stroke' ordenadas
-print(corr_matrix_pipeline['stroke'].sort_values(ascending=False))
+# 7. Fit APENAS no treino, transform nos dois
+# fit_transform no treino: aprende as transformações
+# transform no teste: aplica as transformações já aprendidas (sem reaprender)
+X_train = pipeline.fit_transform(X_train)
+X_test  = pipeline.transform(X_test)
 
-#--------------------------------------------------------------------------------
-# Separar as features (X) da variável alvo (y)
-X = ds_pipeline_df.drop('stroke', axis=1)
-y = ds_pipeline_df['stroke']
+# 8. Recuperar nomes das colunas para análise
+feature_names = pipeline.get_feature_names_out()
+X_train_df = pd.DataFrame(X_train, columns=feature_names)
+X_test_df  = pd.DataFrame(X_test,  columns=feature_names)
 
-# Dividir os dados em conjuntos de treino e teste (80% treino, 20% teste)
-# Usar stratify=y para manter a proporção da classe 'stroke' em ambos os conjuntos
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
-
-# Exibir as dimensões dos conjuntos resultantes
-print("Dimensões do X_train:", X_train.shape)
-print("Dimensões do X_test:", X_test.shape)
-print("Dimensões do y_train:", y_train.shape)
-print(
-"Dimensões do y_test:", y_test.shape)
-
-# Exibir a proporção da variável alvo em cada conjunto para verificar a estratificação
-print("\nProporção de 'stroke' em y_train:\n", y_train.value_counts(normalize=True))
-print("\nProporção de 'stroke' em y_test:\n", y_test.value_counts(normalize=True))
+print("Dimensões do X_train:", X_train_df.shape)
+print("Dimensões do X_test:",  X_test_df.shape)
+print("\nProporção de stroke em y_train:\n", y_train.value_counts(normalize=True))
+print("\nProporção de stroke em y_test:\n",  y_test.value_counts(normalize=True))
 
 
 def get_train_test_data():
-    return X_train, X_test, y_train, y_test
+    return X_train_df, X_test_df, y_train, y_test
