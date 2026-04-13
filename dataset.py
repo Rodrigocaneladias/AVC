@@ -65,6 +65,12 @@ feature_names = pipeline.get_feature_names_out()
 X_train_df = pd.DataFrame(X_train, columns=feature_names)
 X_test_df  = pd.DataFrame(X_test,  columns=feature_names)
 
+df_corr = pd.DataFrame(X_train, columns=feature_names)
+df_corr['stroke'] = y_train.reset_index(drop=True)
+
+print("Correlação com stroke (X_train):")
+print(df_corr.corr()['stroke'].sort_values(ascending=False))
+
 print("Dimensões do X_train:", X_train_df.shape)
 print("Dimensões do X_test:",  X_test_df.shape)
 print("\nProporção de stroke em y_train:\n", y_train.value_counts(normalize=True))
