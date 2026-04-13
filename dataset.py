@@ -82,19 +82,23 @@ X_test_df  = pd.DataFrame(X_test,  columns=feature_names)
 df_corr = pd.DataFrame(X_train, columns=feature_names)
 df_corr['stroke'] = y_train.reset_index(drop=True)
 
-print("Correlação com stroke (X_train):")
-print(df_corr.corr()['stroke'].sort_values(ascending=False))
-print("\n5 linhas do dataset:")
-print(df_corr.head())
-print("\nnumero de nulls na tabela:")
-print(df_corr.isnull().sum())
+def print_data_info():
+    print("\n--------------------------------------------------")
+    print("Correlação com stroke (X_train):")
+    print(df_corr.corr()['stroke'].sort_values(ascending=False))
+    print("\n5 linhas do dataset:")
+    print(df_corr.head())
+    print("\nnumero de nulls na tabela:")
+    print(df_corr.isnull().sum())
 
-print("\n--------------------------------------------------")
-print("Dimensões do X_train:", X_train_df.shape)
-print("Dimensões do X_test:",  X_test_df.shape)
-print("\nProporção de stroke em y_train:\n", y_train.value_counts(normalize=True))
-print("\nProporção de stroke em y_test:\n",  y_test.value_counts(normalize=True))
+    print("\n--------------------------------------------------")
+    print("Dimensões do X_train:", X_train_df.shape)
+    print("Dimensões do X_test:",  X_test_df.shape)
+    print("\nProporção de stroke em y_train:\n", y_train.value_counts(normalize=True))
+    print("\nProporção de stroke em y_test:\n",  y_test.value_counts(normalize=True))
 
+def get_pipeline():
+    return pipeline
 
 def get_train_test_data():
     return X_train_df, X_test_df, y_train, y_test
