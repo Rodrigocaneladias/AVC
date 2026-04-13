@@ -34,6 +34,10 @@ print(f"Threshold otimizado: {threshold:.4f}")
 
 risk_levels = [classify_risk(p, threshold) for p in proba]
 
+#print("\nRisco classificado para cada paciente:")
+#for i, risk in enumerate(risk_levels):
+#    print(f"Paciente {i+1}: {risk}")    
+
 print(f"\nAcurácia:  {accuracy_score(y_test, predictions):.4f}")
 print(f"AUC:       {roc_auc_score(y_test, proba):.4f}")
 print(f"F1-Score:  {f1_score(y_test, predictions):.4f}")
