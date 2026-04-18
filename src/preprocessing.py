@@ -9,28 +9,27 @@ def load_data(path):
 def preprocess(df):
     print("Colunas originais:", df.columns)
 
-    # 🔥 REMOVER coluna que causa vazamento de dados
-    if 'Stroke Risk (%)' in df.columns:
-        df = df.drop(columns=['Stroke Risk (%)'])
+    # remover coluna que causa data leakage
+    df = df.drop(columns=['Stroke Risk (%)'])
 
-    # 🔹 Separar target
+    # separar X e y
     y = df['At Risk (Binary)']
-
-    # 🔹 Separar features (REMOVER target)
     X = df.drop(columns=['At Risk (Binary)'])
 
     print("Colunas usadas no modelo:", X.columns)
 
-    # 🔹 Renomear colunas (remove espaços e caracteres especiais)
-    X.columns = X.columns.str.replace('[^A-Za-z0-9_]+', '_', regex=True)
-
-    # 🔹 Normalização
+    # normalização
     scaler = StandardScaler()
     X = scaler.fit_transform(X)
 
-    # 🔹 Divisão treino/teste
-    X_train, X_test, y_train, y_test = train_test_split(
+    # 🔥 divisão em treino + teste
+    X_temp, X_test, y_temp, y_test = train_test_split(
         X, y, test_size=0.2, random_state=42
     )
 
-    return X_train, X_test, y_train, y_test
+    # 🔥 divisão em treino + validação
+    X_train, X_val, y_train, y_val = train_test_split(
+        X_temp, y_temp, test_size=0.25, random_state=42
+    )
+
+    return X_train, X_val, X_test, y_train, y_val, y_test
