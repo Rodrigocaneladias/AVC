@@ -1,1 +1,22 @@
-__pycache__
+# Ambiente virtual
+.venv/
+venv/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Jupyter
+.ipynb_checkpoints/
+
+# VS Code
+.vscode/
+
+# arquivos temporários
+*.log
+*.tmp
+
+# sistema
+.DS_Store
+Thumbs.db
