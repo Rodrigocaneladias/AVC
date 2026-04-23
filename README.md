@@ -85,7 +85,7 @@ Acesse: `http://localhost:8888`
 pip install -r requirements.txt
 
 # Iniciar Jupyter
-jupyter notebook notebooks/stroke_prediction.ipynb
+jupyter notebook notebooks/AVC_prediction.ipynb
 ```
 
 ## Requisitos
@@ -107,10 +107,6 @@ Ver `requirements.txt`. Principais:
 
 **Modelo final:** Random Forest com threshold=0.3  
 **Recall no teste:** 0.81 | **ROC-AUC:** 0.82
-
-## Aviso Importante
-
-Este sistema é uma ferramenta de **suporte à decisão** — não substitui o diagnóstico médico. O profissional de saúde deve sempre ter a palavra final.
 
 ## Equipe
 
