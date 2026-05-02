@@ -80,7 +80,11 @@ Acesse: `http://localhost:8888`
 
 ### Opção 2: Ambiente local
 
+
 ```bash
+# Utilizar python 3.11
+py -3.11 -m venv venv
+
 # Instalar dependências
 pip install -r requirements.txt
 
