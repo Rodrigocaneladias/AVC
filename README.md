@@ -88,7 +88,7 @@ py -3.11 -m venv venv
 # Instalar dependências
 pip install -r requirements.txt
 
-# Iniciar Jupyter
+# Iniciar Jupyter (Ter o Jupyter instalado previamente)
 jupyter notebook notebooks/AVC_prediction.ipynb
 ```
 
