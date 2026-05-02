@@ -95,7 +95,7 @@ jupyter notebook notebooks/AVC_prediction.ipynb
 ## Requisitos
 
 Ver `requirements.txt`. Principais:
-- Python 3.10+
+- Python 3.11
 - scikit-learn
 - pandas, numpy
 - matplotlib, seaborn
