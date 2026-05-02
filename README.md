@@ -116,8 +116,8 @@ Ver `requirements.txt`. Principais:
 
 PosTech FIAP — IA para Devs — Fase 1
 
-Arthur Oliveira - RM372670
-Bruno Akira - RM372131 
-Camila Flores - RM372571
-Felipe Pereira - 
-Rodrigo Canela - RM371859
+**Arthur Oliveira - RM372670
+**Bruno Akira - RM372131 
+**Camila Flores - RM372571
+**Felipe Pereira - 
+**Rodrigo Canela - RM371859
