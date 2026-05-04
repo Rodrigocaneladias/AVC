@@ -109,9 +109,6 @@ Ver `requirements.txt`. Principais:
 | Random Forest | 0.49 | 0.28 | 0.86 |
 | Gradient Boosting | 0.57 | 0.30 | 0.86 |
 
-**Modelo final:** Random Forest com threshold=0.3  
-**Recall no teste:** 0.81 | **ROC-AUC:** 0.82
-
 ## Equipe
 
 PosTech FIAP — IA para Devs — Fase 1
