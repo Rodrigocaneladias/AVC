@@ -101,13 +101,21 @@ Ver `requirements.txt`. Principais:
 - matplotlib, seaborn
 - jupyter
 
-## Resultados Principais
+### Resultados no conjunto de teste com threshold = 0.3
 
 | Modelo | Recall | F1-Score | ROC-AUC |
-|---|---|---|---|
-| Regressão Logística | 0.89 | 0.26 | 0.89 |
-| Random Forest | 0.49 | 0.28 | 0.86 |
-| Gradient Boosting | 0.57 | 0.30 | 0.86 |
+|---|---:|---:|---:|
+| Regressão Logística | 0.84 | 0.17 | 0.83 |
+| Random Forest | 0.81 | 0.23 | 0.82 |
+| Gradient Boosting | 0.70 | 0.23 | 0.82 |
+
+### Modelo final escolhido
+
+O modelo final escolhido foi o **Random Forest com threshold = 0.3**. Embora a Regressão Logística tenha apresentado o maior recall, o Random Forest obteve melhor equilíbrio geral, com F1-Score superior e menor quantidade de falsos positivos, mantendo um recall alto para identificação de casos de AVC.
+
+Na matriz de confusão do Random Forest, o modelo identificou corretamente **30 dos 37 casos reais de AVC**, resultando em **7 falsos negativos**. Além disso, apresentou **194 falsos positivos**, número inferior ao observado na Regressão Logística com o mesmo threshold, reduzindo o custo operacional associado a alertas incorretos.
+
+Dessa forma, o Random Forest foi selecionado por equilibrar melhor a segurança clínica, priorizando a redução de falsos negativos, com um volume mais controlado de falsos positivos.
 
 ## Equipe
 
